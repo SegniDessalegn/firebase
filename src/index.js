@@ -1,57 +1,78 @@
-import { initializeApp } from "firebase/app";
-import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc, query, where, orderBy, serverTimestamp } from "firebase/firestore";
+import { initializeApp } from 'firebase/app'
+import {
+  getFirestore, collection, onSnapshot,
+  addDoc, deleteDoc, doc,
+  query,
+  orderBy, serverTimestamp,
+  getDoc,
+} from 'firebase/firestore'
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBi57UAdRi7j_xt7vahJctcAZ-mdwXLiXA",
-  authDomain: "practice-78ac5.firebaseapp.com",
-  projectId: "practice-78ac5",
-  storageBucket: "practice-78ac5.appspot.com",
-  messagingSenderId: "689809552370",
-  appId: "1:689809552370:web:e5d25c55e8795f60c8716b",
-};
+  apiKey: "AIzaSyDmXgb_58lO7aK_ujN37pGlNxzWGEU0YpI",
+  authDomain: "fb9-sandbox.firebaseapp.com",
+  projectId: "fb9-sandbox",
+  storageBucket: "fb9-sandbox.appspot.com",
+  messagingSenderId: "867529587246",
+  appId: "1:867529587246:web:dc754ab7840c737f47bdbf"
+}
 
-// init firebase app
-initializeApp(firebaseConfig);
+// init firebase
+initializeApp(firebaseConfig)
 
-// init firestore service
-const db = getFirestore();
+// init services
+const db = getFirestore()
 
 // collection ref
-const colRef = collection(db, "books");
+const colRef = collection(db, 'books')
 
+// queries
 const q = query(colRef, orderBy('createdAt'))
 
-// get real-time docs
-onSnapshot(q, (snapshot)=>{
-  let books = [];
-  snapshot.docs.forEach((doc) => {
-    books.push({ ...doc.data(), id: doc.id });
-  });
-  console.log(books);
+// realtime collection data
+onSnapshot(q, (snapshot) => {
+  let books = []
+  snapshot.docs.forEach(doc => {
+    books.push({ ...doc.data(), id: doc.id })
+  })
+  console.log(books)
 })
 
 // adding docs
-const addBookForm = document.querySelector(".add");
-addBookForm.addEventListener("submit", (e) => {
-  e.preventDefault();
+const addBookForm = document.querySelector('.add')
+addBookForm.addEventListener('submit', (e) => {
+  e.preventDefault()
 
   addDoc(colRef, {
     title: addBookForm.title.value,
     author: addBookForm.author.value,
     createdAt: serverTimestamp()
-  }).then(() => {
-    addBookForm.reset();
-  });
-});
+  })
+  .then(() => {
+    addBookForm.reset()
+  })
+})
 
 // deleting docs
-const deleteBookForm = document.querySelector(".delete");
-deleteBookForm.addEventListener("submit", (e) => {
-  e.preventDefault();
+const deleteBookForm = document.querySelector('.delete')
+deleteBookForm.addEventListener('submit', (e) => {
+  e.preventDefault()
 
-  const docRef = doc(db, "books", deleteBookForm.id.value);
+  const docRef = doc(db, 'books', deleteBookForm.id.value)
 
-  deleteDoc(docRef).then(() => {
-    deleteBookForm.reset();
-  });
-});
+  deleteDoc(docRef)
+    .then(() => {
+      deleteBookForm.reset()
+    })
+})
+
+// fetching a single document (& realtime)
+const docRef = doc(db, 'books', 'gGu4P9x0ZHK9SspA1d9j')
+
+// getDoc(docRef)
+//   .then(doc => {
+//     console.log(doc.data(), doc.id)
+//   })
+
+onSnapshot(docRef, (doc) => {
+  console.log(doc.data(), doc.id)
+})
